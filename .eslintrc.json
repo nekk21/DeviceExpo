@@ -1,0 +1,79 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "react",
+        "prettier"
+    ],
+
+    "rules": {
+        "prettier/prettier": ["error", {
+            "bracketSameLine": false,         // Put the > of a multi-line JSX element at the end of the last line instead of being alone on the next line
+            "jsxSingleQuote": true,       // Use single quotes instead of double quotes in JSX
+            "printWidth": 120,            // Specify the line length that the printer will wrap on
+            "semi": true,                 // Print semicolons at the ends of statements.
+            "singleQuote": true,          // Use single quotes instead of double quotes.
+            "tabWidth": 2,                // Specify the number of spaces per indentation-level.
+            "trailingComma": "all",       // Print trailing commas wherever possible when multi-line.
+            "useTabs": false,             // Indent lines with tabs instead of spaces.
+            "endOfLine": "lf",            // Line Feed only (\n),
+            "arrowParens": "avoid"        // Include parentheses around a sole arrow function parameter.
+          }],    
+
+        "react/jsx-uses-react": 0,
+        "react/prop-types": 2,                // Prevent missing props validation in a React component definition
+        "react/jsx-uses-vars": 2,             // Prevent variables used in JSX to be incorrectly marked as unused
+        "react/display-name": 2,              // Prevent missing displayName in a React component definition
+        "react/no-unescaped-entities": 2,     // Prevent invalid characters from appearing in markup
+        "react/jsx-no-target-blank": 2,       // Prevent usage of unsafe target='_blank'
+        "react/react-in-jsx-scope": 0,        // Prevent missing React when using JSX
+        "react/no-find-dom-node": 2,          // Prevent usage of findDOMNode
+        "react/no-children-prop": 2,          // Prevent passing of children as props
+        "react/jsx-key": 2,                   // Detect missing key prop
+        "react/no-direct-mutation-state": 2,  // Prevent direct mutation of this.state
+        "react/no-deprecated": 2,             // Prevent usage of deprecated methods
+        "react/no-array-index-key": 2,        // Prevent usage of Array index in keys
+
+                // Possible Errors
+                "no-extra-semi": 2,                       // disallow unnecessary semicolons
+                "no-inner-declarations": 2,               // disallow function or variable declarations in nested blocks
+                "jsx-quotes": ["error", "prefer-single"], // It enforces the consistent use of either double or single quotes in JSX attributes.
+        
+                // Best Practices
+                "curly": 2,                       // specify curly brace conventions for all control statements
+                "no-eval": 2,                     // disallow use of eval()
+                "no-extend-native": 2,            // disallow adding to native types
+                "no-new-wrappers": 2,             // disallows creating new instances of String, Number, and Boolean
+                "no-with": 2,                     // disallow use of the with statement
+                "brace-style": ["error", "1tbs"], // enforce consistent brace style for blocks
+
+
+      
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
+}
