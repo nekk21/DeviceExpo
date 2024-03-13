@@ -9,6 +9,7 @@ const HomeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       {/* <InsideAccel /> */}
       <Button title='View Saved Bluetooth Data' onPress={() => navigation.navigate('Data')} />
       <Button title='Best' onPress={() => navigation.navigate('Best')} />
+      <Button title='Metrics' onPress={() => navigation.navigate('Metrics')} />
     </View>
   );
 };

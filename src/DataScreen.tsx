@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, FlatList, Button, View } from 'react-native';
 import { AccelerometerDataType } from './types';
 import { deleteAccelDataFile, readDataFromFile } from '../utils';
-import RNFS from 'react-native-fs';
 
 const DataScreen: React.FC = () => {
   const [data, setData] = useState<AccelerometerDataType[]>([]);
@@ -17,6 +16,8 @@ const DataScreen: React.FC = () => {
     const loadData = async () => {
       // const fileData = await readDataFromFile('/accelData.txt');
       const fileData = await readDataFromFile('/insideAccelData.txt');
+
+      console.log('fileData', fileData[0]);
 
       setData(fileData);
     };

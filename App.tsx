@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './src/HomeScreen';
 import DataScreen from './src/DataScreen';
 import Best from './src/Best';
+import Metrics from './src/Metrics';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ const App = () => {
         <Stack.Screen name='Home' component={HomeScreen} options={{ title: 'Real-Time Data' }} />
         <Stack.Screen name='Data' component={DataScreen} options={{ title: 'Saved Data' }} />
         <Stack.Screen name='Best' component={Best} options={{ title: 'Best' }} />
+        <Stack.Screen name='Metrics' component={Metrics} options={{ title: 'Metrics' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

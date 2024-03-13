@@ -3,6 +3,7 @@ import { View, Text, Button, FlatList, TouchableOpacity, StyleSheet, Alert } fro
 import useBLE from '../useBle';
 import { Device } from 'react-native-ble-plx';
 import { writeAccelDataToFile } from '../utils';
+import InsideAccel from './InsideAccel';
 
 const Best = () => {
   const {
@@ -75,6 +76,8 @@ const Best = () => {
       {isConnected && connectedDevice && (
         <View style={styles.connectedContainer}>
           <Text style={styles.connectedDeviceName}>{connectedDevice.name || 'Connected Device'}</Text>
+
+          <InsideAccel />
 
           <View style={styles.buttonContainer}>
             <Button title='Send 1' onPress={() => handleSendData('2D3E000000')} />
