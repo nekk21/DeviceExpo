@@ -1,5 +1,6 @@
 import { Buffer } from 'buffer';
 import RNFS from 'react-native-fs';
+import Share from 'react-native-share';
 
 export const readFloat32 = (data, offset: number) => {
   const bytes = data
@@ -80,5 +81,46 @@ export const readDataFromFile = async (file: string) => {
   } catch (error) {
     console.error('Failed to read data from file:', error);
     return [];
+  }
+};
+
+export const shareFile = async fileName => {
+  const path = `${RNFS.DocumentDirectoryPath}/${fileName}`;
+  try {
+    const shareResponse = await Share.open({
+      url: `file://${path}`,
+      title: 'Share Accelerometer Data',
+      message: 'Share Accelerometer Data To get data',
+      type: 'text/plain',
+    });
+    console.log('Share Response:', shareResponse);
+  } catch (error) {
+    console.log('Ошибка при попытке поделиться файлом:', error);
+  }
+};
+
+export const transformDataAndSaveToFile = async file => {
+  try {
+    const accelData = await readDataFromFile(`/${file}`);
+
+    if (accelData.length) {
+      const allX = accelData.flatMap(packet => packet.accelerometerData.map(accel => accel.x.toFixed(3))).join(',');
+
+      const allY = accelData.flatMap(packet => packet.accelerometerData.map(accel => accel.y.toFixed(3))).join(',');
+
+      const allZ = accelData.flatMap(packet => packet.accelerometerData.map(accel => accel.z.toFixed(3))).join(',');
+
+      const dataToWrite = `allX ${allX}\nallY ${allY}\nallZ ${allZ}`;
+
+      const modifiedFilePath = `${RNFS.DocumentDirectoryPath}/Modified${file}`;
+
+      await RNFS.writeFile(modifiedFilePath, dataToWrite, 'utf8');
+      console.log('Success', modifiedFilePath);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error:', error);
+    return false;
   }
 };

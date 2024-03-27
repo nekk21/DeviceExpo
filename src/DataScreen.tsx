@@ -1,29 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, FlatList, Button, View } from 'react-native';
 import { AccelerometerDataType } from './types';
-import { deleteAccelDataFile, readDataFromFile } from '../utils';
+import { deleteAccelDataFile, readDataFromFile, shareFile, transformDataAndSaveToFile } from '../utils';
 
 const DataScreen: React.FC = () => {
   const [data, setData] = useState<AccelerometerDataType[]>([]);
 
-  const deleteHandler = () => {
-    deleteAccelDataFile('accelData.txt');
-    deleteAccelDataFile('insideAccelData.txt');
-    setData([]);
-  };
+  const [insideTransformed, setInsideTransformed] = useState<boolean>(false);
+  const [outsideTransformed, setOutsideTransformed] = useState<boolean>(false);
 
   useEffect(() => {
     const loadData = async () => {
       // const fileData = await readDataFromFile('/accelData.txt');
       const fileData = await readDataFromFile('/insideAccelData.txt');
 
-      console.log('fileData', fileData[0]);
+      const isData = await transformDataAndSaveToFile('insideAccelData.txt');
+      const isData2 = await transformDataAndSaveToFile('accelData.txt');
+
+      setInsideTransformed(isData);
+      setOutsideTransformed(isData2);
 
       setData(fileData);
     };
 
     loadData();
   }, []);
+
+  const deleteHandler = () => {
+    deleteAccelDataFile('accelData.txt');
+    deleteAccelDataFile('insideAccelData.txt');
+    setData([]);
+  };
 
   const renderItem = ({ item }: { item: { timestamp: string; accelerometerData: AccelerometerDataType[] } }) => {
     return (
@@ -42,6 +49,10 @@ const DataScreen: React.FC = () => {
     <>
       <View>
         <Button title='Delete Data' onPress={deleteHandler} />
+        {insideTransformed && (
+          <Button title='Share insideAccelData' onPress={() => shareFile('ModifiedinsideAccelData.txt')} />
+        )}
+        {outsideTransformed && <Button title='Share accelData' onPress={() => shareFile('ModifiedaccelData.txt')} />}
       </View>
 
       <FlatList
