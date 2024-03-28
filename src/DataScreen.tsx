@@ -37,7 +37,7 @@ const DataScreen: React.FC = () => {
       <View style={styles.packetContainer}>
         <Text style={styles.timestamp}>Timestamp: {item.timestamp}</Text>
         {item.accelerometerData.map((accel, index) => (
-          <Text key={index} style={styles.accelData}>
+          <Text key={index}>
             X: {accel.x.toFixed(3)}, Y: {accel.y.toFixed(3)}, Z: {accel.z.toFixed(3)}
           </Text>
         ))}
