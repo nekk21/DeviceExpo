@@ -91,14 +91,15 @@ export const shareFile = async fileName => {
       url: `file://${path}`,
       title: 'Share Accelerometer Data',
       message: 'Share Accelerometer Data To get data',
-      type: 'text/plain',
+      type: 'text/csv', //plain
     });
     console.log('Share Response:', shareResponse);
   } catch (error) {
-    console.log('Ошибка при попытке поделиться файлом:', error);
+    console.log('Error:', error);
   }
 };
 
+//transform to text data
 export const transformDataAndSaveToFile = async file => {
   try {
     const accelData = await readDataFromFile(`/${file}`);
@@ -122,5 +123,31 @@ export const transformDataAndSaveToFile = async file => {
   } catch (error) {
     console.error('Error:', error);
     return false;
+  }
+};
+
+export const convertDataToCSVAndSave = async (file: string) => {
+  try {
+    const accelData = await readDataFromFile(`/${file}`);
+
+    const onlyName = file.split('.')[0];
+
+    let csvContent = 'data:text/csv;charset=utf-8,';
+
+    csvContent += 'Timestamp,X,Y,Z\n';
+
+    accelData.forEach(packet => {
+      packet.accelerometerData.forEach(accel => {
+        const row = `${packet.timestamp},${accel.x.toFixed(3)},${accel.y.toFixed(3)},${accel.z.toFixed(3)}`;
+        csvContent += row + '\n';
+      });
+    });
+
+    const filePath = `${RNFS.DocumentDirectoryPath}/${onlyName}.csv`;
+    await RNFS.writeFile(filePath, csvContent, 'utf8');
+
+    console.log('CSV created:', filePath);
+  } catch (error) {
+    console.error('CSV ERROR:', error);
   }
 };

@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, FlatList, Button, View } from 'react-native';
 import { AccelerometerDataType } from './types';
-import { deleteAccelDataFile, readDataFromFile, shareFile, transformDataAndSaveToFile } from '../utils';
+import {
+  convertDataToCSVAndSave,
+  deleteAccelDataFile,
+  readDataFromFile,
+  shareFile,
+  transformDataAndSaveToFile,
+} from '../utils';
 
 const DataScreen: React.FC = () => {
   const [data, setData] = useState<AccelerometerDataType[]>([]);
@@ -16,6 +22,9 @@ const DataScreen: React.FC = () => {
 
       const isData = await transformDataAndSaveToFile('insideAccelData.txt');
       const isData2 = await transformDataAndSaveToFile('accelData.txt');
+
+      await convertDataToCSVAndSave('accelData.txt');
+      await convertDataToCSVAndSave('insideAccelData.txt');
 
       setInsideTransformed(isData);
       setOutsideTransformed(isData2);
@@ -53,6 +62,10 @@ const DataScreen: React.FC = () => {
           <Button title='Share insideAccelData' onPress={() => shareFile('ModifiedinsideAccelData.txt')} />
         )}
         {outsideTransformed && <Button title='Share accelData' onPress={() => shareFile('ModifiedaccelData.txt')} />}
+        {insideTransformed && (
+          <Button title='Share insideAccelData CSV' onPress={() => shareFile('insideAccelData.csv')} />
+        )}
+        {outsideTransformed && <Button title='Share AccelData CSV' onPress={() => shareFile('accelData.csv')} />}
       </View>
 
       <FlatList

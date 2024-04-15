@@ -15,10 +15,14 @@ const Best = () => {
     accel,
     requestPermissions,
     huyna,
+    disconnectFromDevice,
   } = useBLE();
 
   const [isScanning, setIsScanning] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+
+  const [isStart, setStart] = useState<boolean>(false);
+  const [counter, setCounter] = useState<number>(0);
 
   useEffect(() => {
     const getPermissions = async () => {
@@ -31,10 +35,13 @@ const Best = () => {
   }, []);
 
   useEffect(() => {
-    if (accel && accel.accelerometerData && accel.accelerometerData.length > 0) {
-      writeAccelDataToFile(accel, '/accelData.txt');
+    if (isStart) {
+      if (accel && accel.accelerometerData && accel.accelerometerData.length > 0) {
+        writeAccelDataToFile(accel, '/accelData.txt');
+        setCounter(counter => counter + 1);
+      }
     }
-  }, [accel]);
+  }, [accel, isStart]);
 
   const handleStartScan = () => {
     setIsScanning(true);
@@ -50,6 +57,11 @@ const Best = () => {
     setIsConnected(true);
   };
 
+  const handleDisconnect = async () => {
+    await disconnectFromDevice();
+    setIsConnected(false);
+  };
+
   const handleSendData = async (data: string) => {
     await writeToDevice(data);
   };
@@ -59,6 +71,8 @@ const Best = () => {
       {!isConnected && (
         <Button title={isScanning ? 'Scanning...' : 'Start scan'} onPress={handleStartScan} disabled={isScanning} />
       )}
+
+      {isConnected && <Button title='Disconnect' onPress={handleDisconnect} disabled={isScanning} />}
 
       {!isConnected && !isScanning && (
         <FlatList
@@ -77,7 +91,9 @@ const Best = () => {
         <View style={styles.connectedContainer}>
           <Text style={styles.connectedDeviceName}>{connectedDevice.name || 'Connected Device'}</Text>
 
-          <InsideAccel />
+          <Button title={isStart ? 'Stop' : 'Start'} onPress={() => setStart(prev => !prev)} />
+          <InsideAccel started={isStart} />
+          <Text>Bluetooth Counter:{counter}</Text>
 
           <View style={styles.buttonContainer}>
             <Button title='Send 1' onPress={() => handleSendData('2D3E000000')} />
