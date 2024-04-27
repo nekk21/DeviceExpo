@@ -66,6 +66,15 @@ const Best = () => {
     await writeToDevice(data);
   };
 
+  const handleToggler = () => {
+    if (isStart) {
+      setCounter(0);
+      setStart(false);
+      return;
+    }
+    setStart(true);
+  };
+
   return (
     <View style={styles.container}>
       {!isConnected && (
@@ -91,7 +100,7 @@ const Best = () => {
         <View style={styles.connectedContainer}>
           <Text style={styles.connectedDeviceName}>{connectedDevice.name || 'Connected Device'}</Text>
 
-          <Button title={isStart ? 'Stop' : 'Start'} onPress={() => setStart(prev => !prev)} />
+          <Button title={isStart ? 'Stop' : 'Start'} onPress={handleToggler} />
           <InsideAccel started={isStart} />
           <Text>Bluetooth Counter:{counter}</Text>
 

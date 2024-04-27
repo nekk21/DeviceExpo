@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
 import { AccelerometerDataType } from './types';
@@ -9,7 +9,7 @@ interface InsideAccelProps {
 }
 
 const InsideAccel = ({ started }: InsideAccelProps) => {
-  const [dataBuffer, setDataBuffer] = useState<AccelerometerDataType[]>([]);
+  const dataBufferRef = useRef<AccelerometerDataType[]>([]);
   const [counter, setCounter] = useState<number>(0);
 
   useEffect(() => {
@@ -21,31 +21,30 @@ const InsideAccel = ({ started }: InsideAccelProps) => {
           accelerometerData[key] = Math.abs(accelerometerData[key]);
         });
 
-        setDataBuffer(prevBuffer => [...prevBuffer, accelerometerData]);
+        dataBufferRef.current.push(accelerometerData);
 
-        if (dataBuffer.length === 10) {
+        if (dataBufferRef.current.length === 10) {
           const packet = {
             time: Date.now(),
-            accelerometerData: dataBuffer,
+            accelerometerData: dataBufferRef.current,
           };
 
-          setCounter(counter => counter + 1);
-
           writeAccelDataToFile(packet, '/insideAccelData.txt');
-          setDataBuffer([]);
+          dataBufferRef.current = [];
+          setCounter(counter => counter + 1);
         }
       }
     });
 
     return () => subscription.remove();
-  }, [dataBuffer, started]);
+  }, [started]);
 
   return (
     <View style={styles.container}>
-      <Text>Accel X: {dataBuffer[0]?.x.toFixed(3)}</Text>
-      <Text>Accel Y: {dataBuffer[0]?.y.toFixed(3)}</Text>
-      <Text>Accel Z: {dataBuffer[0]?.z.toFixed(3)}</Text>
-      <Text>Local Counter:{counter} </Text>
+      <Text>Accel X: {dataBufferRef.current[0]?.x.toFixed(3)}</Text>
+      <Text>Accel Y: {dataBufferRef.current[0]?.y.toFixed(3)}</Text>
+      <Text>Accel Z: {dataBufferRef.current[0]?.z.toFixed(3)}</Text>
+      <Text>Local Counter: {counter}</Text>
     </View>
   );
 };
