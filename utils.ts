@@ -31,7 +31,7 @@ export const deleteAccelDataFile = async (filename: string) => {
 
 export const writeAccelDataToFile = async (data, file) => {
   const path = RNFS.DocumentDirectoryPath + file;
-  let stringData = `Time: ${data.time}\n`;
+  let stringData = `DrivingType: ${data.time}\n`;
 
   data.accelerometerData.forEach(accel => {
     stringData += `X: ${accel.x.toFixed(3)}, Y: ${accel.y.toFixed(3)}, Z: ${accel.z.toFixed(3)}\n`;
@@ -134,7 +134,7 @@ export const convertDataToCSVAndSave = async (file: string) => {
 
     let csvContent = 'data:text/csv;charset=utf-8,';
 
-    csvContent += 'Timestamp,X,Y,Z\n';
+    csvContent += 'DrivingType,X,Y,Z\n';
 
     accelData.forEach(packet => {
       packet.accelerometerData.forEach(accel => {

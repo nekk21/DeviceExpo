@@ -24,6 +24,8 @@ const Best = () => {
   const [isStart, setStart] = useState<boolean>(false);
   const [counter, setCounter] = useState<number>(0);
 
+  const [drivingType, setDrivingType] = useState<string>('Slow');
+
   useEffect(() => {
     const getPermissions = async () => {
       const permissionsGranted = await requestPermissions();
@@ -37,6 +39,7 @@ const Best = () => {
   useEffect(() => {
     if (isStart) {
       if (accel && accel.accelerometerData && accel.accelerometerData.length > 0) {
+        accel.time = drivingType;
         writeAccelDataToFile(accel, '/accelData.txt');
         setCounter(counter => counter + 1);
       }
@@ -101,8 +104,31 @@ const Best = () => {
           <Text style={styles.connectedDeviceName}>{connectedDevice.name || 'Connected Device'}</Text>
 
           <Button title={isStart ? 'Stop' : 'Start'} onPress={handleToggler} />
-          <InsideAccel started={isStart} />
+          <InsideAccel started={isStart} drivingType={drivingType} />
           <Text>Bluetooth Counter:{counter}</Text>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              color={drivingType === 'Regular' ? 'green' : 'red'}
+              title='Regular'
+              onPress={() => setDrivingType('Regular')}
+            />
+            <Button
+              color={drivingType === 'Slow' ? 'green' : 'red'}
+              title='Slow'
+              onPress={() => setDrivingType('Slow')}
+            />
+            <Button
+              color={drivingType === 'Fast' ? 'green' : 'red'}
+              title='Fast'
+              onPress={() => setDrivingType('Fast')}
+            />
+            <Button
+              color={drivingType === 'OffRoad' ? 'green' : 'red'}
+              title='OffRoad'
+              onPress={() => setDrivingType('OffRoad')}
+            />
+          </View>
 
           <View style={styles.buttonContainer}>
             <Button title='Send 1' onPress={() => handleSendData('2D3E000000')} />

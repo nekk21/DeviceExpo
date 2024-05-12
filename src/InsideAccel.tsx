@@ -6,9 +6,10 @@ import { writeAccelDataToFile } from '../utils';
 
 interface InsideAccelProps {
   started: boolean;
+  drivingType: string;
 }
 
-const InsideAccel = ({ started }: InsideAccelProps) => {
+const InsideAccel = ({ started, drivingType }: InsideAccelProps) => {
   const dataBufferRef = useRef<AccelerometerDataType[]>([]);
   const [counter, setCounter] = useState<number>(0);
 
@@ -25,7 +26,7 @@ const InsideAccel = ({ started }: InsideAccelProps) => {
 
         if (dataBufferRef.current.length === 10) {
           const packet = {
-            time: Date.now(),
+            time: drivingType,
             accelerometerData: dataBufferRef.current,
           };
 

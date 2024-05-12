@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-bitwise */
 import { useMemo, useState } from 'react';
 import { PermissionsAndroid, Platform } from 'react-native';
@@ -9,8 +10,9 @@ import { AccelerometerDataType } from './src/types';
 import { base64ToHex, readFloat32 } from './utils';
 
 interface AccelType {
-  time: number;
+  time: number | string;
   accelerometerData: AccelerometerDataType[];
+  spike: string;
 }
 
 interface BluetoothLowEnergyApi {
@@ -34,7 +36,7 @@ const useBLE = (): BluetoothLowEnergyApi => {
   const bleManager = useMemo(() => new BleManager(), []);
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
-  const [accel, setAccel] = useState<AccelType>({ time: 0, accelerometerData: [] });
+  const [accel, setAccel] = useState<AccelType>({ time: '', spike: '', accelerometerData: [] });
   //TODO
   const [huyna, setHuyna] = useState<any>({});
 
@@ -163,12 +165,12 @@ const useBLE = (): BluetoothLowEnergyApi => {
 
       accelerometerData.push({ x: xValue, y: yValue, z: zValue });
     }
+    //no usage
+    // const time = Date.now();
 
-    const time = Date.now();
-
-    setAccel({ time: time, accelerometerData: accelerometerData });
+    setAccel({ time: '', spike: '', accelerometerData: accelerometerData });
     //TODO
-    setHuyna({ ...huyna, AllGood: `All GOOD! ${time}` });
+    setHuyna({ ...huyna, AllGood: `All GOOD! ${'time'}` });
   };
 
   const startStreamingData = async (device: Device) => {
