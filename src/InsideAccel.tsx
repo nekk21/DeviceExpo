@@ -3,15 +3,23 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
 import { AccelerometerDataType } from './types';
 import { writeAccelDataToFile } from '../utils';
+import { SpikeType } from '../useBle';
 
 interface InsideAccelProps {
   started: boolean;
   drivingType: string;
+  spike: SpikeType;
 }
 
-const InsideAccel = ({ started, drivingType }: InsideAccelProps) => {
+const InsideAccel = ({ started, drivingType, spike }: InsideAccelProps) => {
   const dataBufferRef = useRef<AccelerometerDataType[]>([]);
   const [counter, setCounter] = useState<number>(0);
+
+  const [tempSpike, setTempSpike] = useState<SpikeType>({ bump: 0, stop: 0, pit: 0 });
+
+  useEffect(() => {
+    setTempSpike(spike);
+  }, [spike]);
 
   useEffect(() => {
     Accelerometer.setUpdateInterval(100);
@@ -26,19 +34,21 @@ const InsideAccel = ({ started, drivingType }: InsideAccelProps) => {
 
         if (dataBufferRef.current.length === 10) {
           const packet = {
+            spike: tempSpike,
             time: drivingType,
             accelerometerData: dataBufferRef.current,
           };
 
           writeAccelDataToFile(packet, '/insideAccelData.txt');
           dataBufferRef.current = [];
+          setTempSpike({ bump: 0, stop: 0, pit: 0 });
           setCounter(counter => counter + 1);
         }
       }
     });
 
     return () => subscription.remove();
-  }, [started]);
+  }, [started, tempSpike, drivingType]);
 
   return (
     <View style={styles.container}>

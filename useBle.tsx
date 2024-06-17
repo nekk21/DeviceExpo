@@ -9,10 +9,16 @@ import base64 from 'react-native-base64';
 import { AccelerometerDataType } from './src/types';
 import { base64ToHex, readFloat32 } from './utils';
 
+export interface SpikeType {
+  bump: number;
+  stop: number;
+  pit: number;
+}
+
 interface AccelType {
   time: number | string;
   accelerometerData: AccelerometerDataType[];
-  spike: string;
+  spike: SpikeType;
 }
 
 interface BluetoothLowEnergyApi {
@@ -36,7 +42,11 @@ const useBLE = (): BluetoothLowEnergyApi => {
   const bleManager = useMemo(() => new BleManager(), []);
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
-  const [accel, setAccel] = useState<AccelType>({ time: '', spike: '', accelerometerData: [] });
+  const [accel, setAccel] = useState<AccelType>({
+    time: '',
+    spike: { bump: 0, stop: 0, pit: 0 },
+    accelerometerData: [],
+  });
   //TODO
   const [huyna, setHuyna] = useState<any>({});
 
@@ -168,7 +178,7 @@ const useBLE = (): BluetoothLowEnergyApi => {
     //no usage
     // const time = Date.now();
 
-    setAccel({ time: '', spike: '', accelerometerData: accelerometerData });
+    setAccel({ time: '', spike: { bump: 0, stop: 0, pit: 0 }, accelerometerData: accelerometerData });
     //TODO
     setHuyna({ ...huyna, AllGood: `All GOOD! ${'time'}` });
   };

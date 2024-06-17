@@ -8,6 +8,7 @@ import {
   shareFile,
   transformDataAndSaveToFile,
 } from '../utils';
+import { SpikeType } from '../useBle';
 
 const DataScreen: React.FC = () => {
   const [data, setData] = useState<AccelerometerDataType[]>([]);
@@ -41,10 +42,16 @@ const DataScreen: React.FC = () => {
     setData([]);
   };
 
-  const renderItem = ({ item }: { item: { timestamp: string; accelerometerData: AccelerometerDataType[] } }) => {
+  const renderItem = ({
+    item,
+  }: {
+    item: { spike: SpikeType; timestamp: string; accelerometerData: AccelerometerDataType[] };
+  }) => {
     return (
       <View style={styles.packetContainer}>
-        <Text style={styles.timestamp}>Timestamp: {item.timestamp}</Text>
+        <Text style={styles.timestamp}>
+          Driving Type: {item.timestamp} Bump: {item.spike.bump} Stop: {item.spike.stop} Pit: {item.spike.pit}
+        </Text>
         {item.accelerometerData.map((accel, index) => (
           <Text key={index}>
             X: {accel.x.toFixed(3)}, Y: {accel.y.toFixed(3)}, Z: {accel.z.toFixed(3)}

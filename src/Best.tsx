@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import useBLE from '../useBle';
+import useBLE, { SpikeType } from '../useBle';
 import { Device } from 'react-native-ble-plx';
 import { writeAccelDataToFile } from '../utils';
 import InsideAccel from './InsideAccel';
@@ -26,6 +26,8 @@ const Best = () => {
 
   const [drivingType, setDrivingType] = useState<string>('Slow');
 
+  const [spike, setSpike] = useState<SpikeType>({ bump: 0, stop: 0, pit: 0 });
+
   useEffect(() => {
     const getPermissions = async () => {
       const permissionsGranted = await requestPermissions();
@@ -39,8 +41,11 @@ const Best = () => {
   useEffect(() => {
     if (isStart) {
       if (accel && accel.accelerometerData && accel.accelerometerData.length > 0) {
+        accel.spike = spike;
         accel.time = drivingType;
         writeAccelDataToFile(accel, '/accelData.txt');
+
+        setSpike({ bump: 0, stop: 0, pit: 0 });
         setCounter(counter => counter + 1);
       }
     }
@@ -104,8 +109,14 @@ const Best = () => {
           <Text style={styles.connectedDeviceName}>{connectedDevice.name || 'Connected Device'}</Text>
 
           <Button title={isStart ? 'Stop' : 'Start'} onPress={handleToggler} />
-          <InsideAccel started={isStart} drivingType={drivingType} />
+          <InsideAccel started={isStart} drivingType={drivingType} spike={spike} />
           <Text>Bluetooth Counter:{counter}</Text>
+
+          <View style={styles.buttonContainer}>
+            <Button title='Bump' onPress={() => setSpike({ bump: 1, stop: 0, pit: 0 })} />
+            <Button title='Stop' onPress={() => setSpike({ bump: 0, stop: 1, pit: 0 })} />
+            <Button title='Pit' onPress={() => setSpike({ bump: 0, stop: 0, pit: 1 })} />
+          </View>
 
           <View style={styles.buttonContainer}>
             <Button

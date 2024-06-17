@@ -31,7 +31,7 @@ export const deleteAccelDataFile = async (filename: string) => {
 
 export const writeAccelDataToFile = async (data, file) => {
   const path = RNFS.DocumentDirectoryPath + file;
-  let stringData = `DrivingType: ${data.time}\n`;
+  let stringData = `DrivingType: ${data.time} Bump: ${data.spike.bump} Stop: ${data.spike.stop} Pit: ${data.spike.pit}\n`;
 
   data.accelerometerData.forEach(accel => {
     stringData += `X: ${accel.x.toFixed(3)}, Y: ${accel.y.toFixed(3)}, Z: ${accel.z.toFixed(3)}\n`;
@@ -60,6 +60,12 @@ export const readDataFromFile = async (file: string) => {
         const timestampLine = lines.shift();
         const timestamp = timestampLine.split(' ')[1];
 
+        const spike = { bump: 0, stop: 0, pit: 0 };
+
+        spike.bump = +timestampLine.split(' ')[3];
+        spike.stop = +timestampLine.split(' ')[5];
+        spike.pit = +timestampLine.split(' ')[7];
+
         const accelerometerData = lines
           .map(line => {
             const parts = line.split(', ').map(measurement => {
@@ -74,7 +80,7 @@ export const readDataFromFile = async (file: string) => {
           })
           .filter(accel => accel !== null);
 
-        return { timestamp, accelerometerData };
+        return { timestamp, spike, accelerometerData };
       });
 
     return data;
@@ -134,11 +140,11 @@ export const convertDataToCSVAndSave = async (file: string) => {
 
     let csvContent = 'data:text/csv;charset=utf-8,';
 
-    csvContent += 'DrivingType,X,Y,Z\n';
+    csvContent += 'DrivingType,Bump,Stop,Pit,X,Y,Z\n';
 
     accelData.forEach(packet => {
       packet.accelerometerData.forEach(accel => {
-        const row = `${packet.timestamp},${accel.x.toFixed(3)},${accel.y.toFixed(3)},${accel.z.toFixed(3)}`;
+        const row = `${packet.timestamp},${packet.spike.bump},${packet.spike.stop},${packet.spike.pit},${accel.x.toFixed(3)},${accel.y.toFixed(3)},${accel.z.toFixed(3)}`;
         csvContent += row + '\n';
       });
     });
